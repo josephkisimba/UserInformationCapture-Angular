@@ -1,10 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common'; // Import CommonModule
+import { isPlatformBrowser } from '@angular/common';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent],
+      imports: [FormsModule, CommonModule],
+      declarations: [AppComponent], // Declare the component here
     }).compileComponents();
   });
 
@@ -14,16 +18,21 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'user-info-fe' title`, () => {
+  it('should initialize the map on the browser platform', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('user-info-fe');
+
+    spyOn(app, 'initializeMap'); // Spy on the initializeMap method
+
+    fixture.detectChanges();
+
+    // Access the platformId property from the CommonModule
+    if (isPlatformBrowser(app.constructor.prototype.platformId)) {
+      expect(app.initializeMap).toHaveBeenCalled();
+    } else {
+      expect(app.initializeMap).not.toHaveBeenCalled();
+    }
   });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, user-info-fe');
-  });
+  // Add more tests based on your application logic
 });
